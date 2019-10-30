@@ -30,7 +30,7 @@ const TodoList = props => {
 
             align-self: stretch;
             padding: 1.5% 2%;
-            border: 1px solid darkgrey;
+            border: 1px solid #b22222;
             
         }
     }
@@ -41,12 +41,12 @@ const TodoList = props => {
 
         <ListCard>
             <ul>
-                {props.list.map(todo => {
+                 {props.list.map(todo => {
                     return <li listid={todo.id} 
                     key={todo.id} 
                     onClick={props.toggle}
                     style={{
-                    backgroundColor: todo.completed ?  'green' : 'lightgrey',
+                    backgroundColor: todo.completed ?  '#9fe2bf' : '#ff6347',
                     }}
                     >{todo.task}</li>
                 })}
