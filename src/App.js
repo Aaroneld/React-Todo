@@ -1,5 +1,6 @@
 import React from 'react';
 import { createGlobalStyle } from 'styled-components';
+import ls from 'local-storage';
 import TodoInput from './components/TodoInput';
 import TodoList from './components/TodoList';
 import TodoSearch from "./components/TodoSearch";
@@ -27,35 +28,50 @@ class App extends React.Component {
 
   }
 
+componentDidMount () {
+
+  if(ls.get('todoList') !== null)
+  this.setState({todoList: ls.get('todoList')});
+}
+
 handleSubmit = e => {
   
   e.preventDefault();
+  let forLocalStorage = this.state.todoList;
+  
   if (e.target[0].value !== "") {
     this.setState({todoList: [...this.state.todoList, {
       task: e.target[0].value,
       id: Date.now(),
       completed: false
     }]});
+    ls.set('todoList', [...forLocalStorage, {
+      task: e.target[0].value,
+      id: Date.now(),
+      completed: false}]);
   }
+  
 };
 
 handleClear = _ => {
   console.log(this.state.todoList);
   const clearList = this.state.todoList.filter(todos =>{
     return todos.completed === false});
+  
+  let filterArr = [];
+  for (let i = 0; i < this.state.searchValue ; i++) {
+      filterArr = clearList.filter(todo => {
+          return todo.task.charAt(i).toLowerCase().includes(this.state.searchValue.charAt(i).toLowerCase());
+      }); 
+    }
+  
+  console.log(filterArr);
+  this.setState({todoList: clearList,
+                searchList: filterArr});
+
+  ls.set('todoList', clearList);
 
   
-  console.log(clearList);
-  this.setState({todoList: clearList});
-
-  let filterArr = clearList;
-  for (let i = 0; i < this.state.searchValue ; i++) {
-    filterArr = filterArr.filter(todo => {
-        return todo.task.charAt(i).toLowerCase().includes(this.state.searchValue.charAt(i).toLowerCase());
-      }); 
-  }
-
-  this.setState({searchList: filterArr});
 }
 
 toggleCompleted = e => {
@@ -66,13 +82,15 @@ toggleCompleted = e => {
   this.setState(prevState => ({
     todoList: prevState.todoList.map( todo =>
       todo.id === ID ? {...todo, completed: !todo.completed} : todo
-    )}));
-
-  this.setState(prevState => ({
-    searchList: prevState.searchList.map( todo =>
+    ), searchList: prevState.searchList.map( todo =>
       todo.id === ID ? {...todo, completed: !todo.completed} : todo
-      )}));
-  
+  )}));
+
+  let forLocalStore = this.state.todoList.map(todo => {
+  return todo.id === ID ? {...todo, completed: !todo.completed} : todo
+  });
+
+  ls.set('todoList', forLocalStore);
 
   console.log(this.state.todoList);
 }
@@ -80,20 +98,22 @@ toggleCompleted = e => {
 handleSearch = e => {
   
   e.preventDefault();
-  console.log(e.target[0].value);
-  let filterArr = this.state.todoList;
-  console.log(filterArr);
-  for (let i = 0; i < e.target[0].value.length; i++) {
-           
-    filterArr = filterArr.filter(todo => {
-        return todo.task.charAt(i).toLowerCase().includes(e.target[0].value.charAt(i).toLowerCase());
-    }); 
-  }
+  if(e.target[0].value !== ""){
+    console.log(e.target[0].value);
+    let filterArr = this.state.todoList;
+    console.log(filterArr);
+    for (let i = 0; i < e.target[0].value.length; i++) {
+            
+      filterArr = filterArr.filter(todo => {
+          return todo.task.charAt(i).toLowerCase().includes(e.target[0].value.charAt(i).toLowerCase());
+      }); 
+    }
 
-  console.log(filterArr);
-  this.setState({searchList: filterArr,
-                searchValue: e.target[0].value});
-  console.log(this.state.searchList);
+    console.log(filterArr);
+    this.setState({searchList: filterArr,
+                  searchValue: e.target[0].value});
+    console.log(this.state.searchList);
+  }
 }
 
   

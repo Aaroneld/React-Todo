@@ -11,11 +11,34 @@ const SearchCard = styled.div`
     form {
 
         padding: 3%;
+        display: flex;
+        flex-flow: column; 
+        
         
         input {
 
             font-size: 150%;
         }
+
+        button {
+
+            margin: 3% 0 0 25%;
+            padding: 3.5% 3%;
+            max-width: 50%;
+            color: white;
+            background: black;
+            border: none;
+    
+            &:hover {
+    
+                color: black;
+                background: white;
+            }
+    
+            &:focus {
+    
+                outline: none;
+            }
     }
 `;
 
@@ -25,7 +48,7 @@ const TodoSearch = props => {
     return (
         <SearchCard>
             <form onSubmit={props.search}>
-                <input placeholder="search Todos"/>
+                <input placeholder="...Search Todos"/>
                 <button type="submit">Search</button>
             </form>
         </SearchCard>
